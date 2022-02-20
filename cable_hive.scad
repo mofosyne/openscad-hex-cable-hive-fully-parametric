@@ -9,6 +9,10 @@
 //  - Fully parametric drawer cable storage management hive by iX__ November 02, 2016 : https://www.thingiverse.com/thing:1862897
 //  - Cable Management Hive Remix by murlr August 24, 2016 : https://www.thingiverse.com/thing:1734587
 //  - Cable management Hive by Filar3D August 09, 2015 : https://www.thingiverse.com/thing:961176
+//
+// To Contribute:
+//  - Send any improvements as a pull request to https://github.com/mofosyne/openscad-hex-cable-hive-fully-parametric
+//
 
 // custom cable hive
 $fn = 6; // hex=6

@@ -1,5 +1,9 @@
 # OpenSCAD Fully parametric drawer cable storage management hive with punch cuts (openscad-hex-cable-hive-fully-parametric)
 
+![](./png/cable_hive_punch_cut_4x5.png)
+![](./png/cable_hive_solid_wall_4x5.png)
+![](./png/cable_hive_boxed_wall_4x5.png)
+
 OpenSCAD Fully parametric drawer cable storage management hex hive with punch cuts
 
 This is an OpenSCAD sketch to generate fully customizable honeycomb wire storage system.
@@ -54,7 +58,6 @@ nb_of_outer_shell = 3;
   - Fully parametric drawer cable storage management hive by iX__ November 02, 2016 : https://www.thingiverse.com/thing:1862897
   - Cable Management Hive Remix by murlr August 24, 2016 : https://www.thingiverse.com/thing:1734587
   - Cable management Hive by Filar3D August 09, 2015 : https://www.thingiverse.com/thing:961176
-
 
 ## Licence:
 

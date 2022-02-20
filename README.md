@@ -4,6 +4,8 @@ OpenSCAD Fully parametric drawer cable storage management hex hive with punch cu
 
 This is an OpenSCAD sketch to generate fully customizable honeycomb wire storage system.
 
+Contributions is welcomed via Pull Requests
+
 * Originally by iX (November 02, 2016)  [iX Other Designs on thingiverse](https://www.thingiverse.com/ix__/designs)
 * Extended by mofosyne for punchcut support for reduce material requirement and print time (February 20, 2022)
 

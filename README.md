@@ -1,8 +1,6 @@
 # OpenSCAD Fully parametric drawer cable storage management hive with punch cuts (openscad-hex-cable-hive-fully-parametric)
 
-![](./png/cable_hive_punch_cut_4x5.png)
-![](./png/cable_hive_solid_wall_4x5.png)
-![](./png/cable_hive_boxed_wall_4x5.png)
+![](cable_hive_IRL.jpg)
 
 OpenSCAD Fully parametric drawer cable storage management hex hive with punch cuts
 
@@ -10,9 +8,18 @@ This is an OpenSCAD sketch to generate fully customizable honeycomb wire storage
 
 Contributions is welcomed via Pull Requests
 
-* Originally by iX (November 02, 2016)  [iX Other Designs on thingiverse](https://www.thingiverse.com/ix__/designs)
+* Originally by iX (November 02, 2016) [iX Other Designs on thingiverse](https://www.thingiverse.com/ix__/designs)
 * Extended by mofosyne for punchcut support for reduce material requirement and print time (February 20, 2022)
     - Inspired by lokabayashi remix of iX's design [lokabayashi other designs](https://www.thingiverse.com/lokabayashi/designs)
+    - Also added support for screw mounting as an option
+
+## Remix Of:
+  - Drawer Cable Storage Hive - Punched by lokabayashi May 07, 2020 : https://www.thingiverse.com/thing:4342689
+  - Fully parametric drawer cable storage management hive by iX__ November 02, 2016 : https://www.thingiverse.com/thing:1862897
+  - Cable Management Hive Remix by murlr August 24, 2016 : https://www.thingiverse.com/thing:1734587
+  - Cable management Hive by Filar3D August 09, 2015 : https://www.thingiverse.com/thing:961176
+
+---------------------------------------------------------------------------------
 
 ## Settings
 
@@ -31,11 +38,20 @@ nozzle = 0.4;
 nb_of_outer_shell = 3;
 ```
 
+If mounting holes is enabled, by default these are the values chosen. Which was picked due to it use in some V-slot T-slot screws (10mm).
+
+```
+drillholeDiameter=8;
+countersunkDiameter=15;
+countersunkHeight=2;
+```
+
 ## Options Available
 
 * `I_want_a_surrounding_wall` : (default: false) set this bit to 1 if you want a square wall surrounding your cable hive. It is better to set option "I_wish_to_combine_it_later" to 0 to have nice surrounding wall
 * `I_wish_to_combine_it_later` : (default: false) will add a slot on all odd Y lines so that you will be able to concatenate this part with an other on
 * `I_want_side_wall_punch` : (default: true) set this bit to 1 to reduce material requirement
+* `I_want_mounting_screw_holes` : (default: false)`set this bit to 1 to add mounting hole
 
 ## 4x5 Cable Output Spec
 
@@ -55,11 +71,26 @@ nb_of_outer_shell = 3;
 * Its dimensions are X = 143.955 and Y = 163.289
 * You have a total number of 20 slots to host your silly cables :)
 
-## Remix Of:
-  - Drawer Cable Storage Hive - Punched by lokabayashi May 07, 2020 : https://www.thingiverse.com/thing:4342689
-  - Fully parametric drawer cable storage management hive by iX__ November 02, 2016 : https://www.thingiverse.com/thing:1862897
-  - Cable Management Hive Remix by murlr August 24, 2016 : https://www.thingiverse.com/thing:1734587
-  - Cable management Hive by Filar3D August 09, 2015 : https://www.thingiverse.com/thing:961176
+--------------------------------------------------------------------------------
+
+## Preview:
+
+### Punch Cut
+![](./png/cable_hive_punch_cut_4x5.png)
+
+### Solid Wall
+![](./png/cable_hive_solid_wall_4x5.png)
+
+### Boxed Wall
+![](./png/cable_hive_boxed_wall_4x5.png)
+
+### Punch Cut With Screwmount
+![](./png/cable_hive_punch_cut_with_screwmount_4x5.png)
+
+### Solid Wall With Screwmount
+![](./png/cable_hive_solid_wall_with_screwmount_4x5.png)
+
+--------------------------------------------------------------------------------
 
 ## License:
 

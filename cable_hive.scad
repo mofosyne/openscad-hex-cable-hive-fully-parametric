@@ -45,6 +45,9 @@ drillholeDiameter=8;
 countersunkDiameter=15;
 countersunkHeight=2;
 
+/* [Length Wise Cut] */
+lengthwise_cuts_count = 3;
+
 /* [Build Options] */
 I_want_a_surrounding_wall = false; // set this bit to 1 if you wannt a square wall surronding your cable hive. It is better to set option "I_wish_to_combine_it_later" to 0 to have nice surrounding wall
 
@@ -53,6 +56,8 @@ I_wish_to_combine_it_later = false; // will add a slot on all odd Y lines so tha
 I_want_side_wall_punch = true; // set this bit to 1 to reduce material requirement
 
 I_want_mounting_screw_holes = false; // set this bit to 1 to add mounting holes
+
+I_want_lengthwise_cuts = false; // set this bit to 1 to add extra internal cuts (e.g. business cards)
 
 /////////////////////////////////////////////////////////////////////////////////
 //////////////////////////// Private Variables ////////////////////////////////
@@ -104,20 +109,47 @@ echo("Pitch bis in Y is", pitch_Y_bis);
 //////////////////////////// Core //////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-for (X = [0:(nb_slots_X - 1)])
+difference()
 {
-    for (Y = [0:(nb_slots_Y - 1)])
+    // Main Bulk
+    for (X = [0:(nb_slots_X - 1)])
     {
-        if (Y % 2 == 0)
+        for (Y = [0:(nb_slots_Y - 1)])
         {
-            translate([ X * pitch_X, Y * pitch_Y, 0 ]) honeycomb();
+            if (Y % 2 == 0)
+            {
+                translate([ X * pitch_X, Y * pitch_Y, 0 ]) honeycomb();
+            }
+            else if (X != nb_slots_X - 1 || I_wish_to_combine_it_later != 0)
+            {
+                translate([ (X + 0.5) * pitch_X, Y * pitch_Y, 0 ]) honeycomb();
+            }
         }
-        else if (X != nb_slots_X - 1 || I_wish_to_combine_it_later != 0)
+    }
+
+    // Extra Side Wall Cuts (e.g. Business Cards)
+    if (I_want_lengthwise_cuts)
+    {
+        for (X = [0:(nb_slots_X - 1)])
         {
-            translate([ (X + 0.5) * pitch_X, Y * pitch_Y, 0 ]) honeycomb();
+            for (Y = [0:(nb_slots_Y - 1)])
+            {
+                if ((X != 0) && ((X % lengthwise_cuts_count) > 0))
+                {
+                    if (Y % 2 == 0)
+                    {
+                        translate([ X * pitch_X, Y * pitch_Y, 0 ]) honeycomb_side_wall_cut();
+                    }
+                    else if (X != nb_slots_X - 1 || I_wish_to_combine_it_later != 0)
+                    {
+                        translate([ (X + 0.5) * pitch_X, Y * pitch_Y, 0 ]) honeycomb_side_wall_cut();
+                    }
+                }
+            }
         }
     }
 }
+
 
 if (I_want_a_surrounding_wall)
 {
@@ -239,3 +271,25 @@ module drillHole()
             }
     }
 }
+
+
+module honeycomb_side_wall_cut()
+{
+    // Add Extended Cut (e.g. Business Cards)
+    rotate([ 0, 0, 30 ])
+    {
+        // Add Extended Cut (e.g. Business Cards)
+        less_side_wall_total_h = (cable_slot_height - cable_slot_wall_thickness * 2);
+        less_side_wall_corner_h = less_side_wall_total_h / punch_corner_hole_count;
+        less_side_wall_side_angle = 360 / $fn;
+        less_side_wall_W = 2 * (sin(less_side_wall_side_angle / 2) * (cable_slot_diameter / 2));
+        less_side_wall_Apothem = cos(less_side_wall_side_angle / 2) * (cable_slot_diameter / 2);
+        for (cutRotate = [2:2])
+        {
+            translate([ 0, 0, cable_slot_wall_thickness + cable_slot_height / 2 ])
+                rotate([ 0, 0, (less_side_wall_side_angle / 2) + cutRotate * less_side_wall_side_angle ])
+                    translate([ less_side_wall_Apothem - cable_slot_wall_thickness / 2, 0, 0 ])
+                        cube([ cable_slot_wall_thickness * 2, less_side_wall_W - cable_slot_wall_thickness, cable_slot_height], center = true);
+        }
+    }
+};

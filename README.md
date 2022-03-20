@@ -1,4 +1,4 @@
-# OpenSCAD Fully parametric drawer cable storage management hive with punch cuts (openscad-hex-cable-hive-fully-parametric)
+# OpenSCAD Fully parametric drawer cable storage management hive with punch cuts (Plus business card holder)(openscad-hex-cable-hive-fully-parametric)
 
 ![](cable_hive_IRL.jpg)
 
@@ -52,6 +52,7 @@ countersunkHeight=2;
 * `I_wish_to_combine_it_later` : (default: false) will add a slot on all odd Y lines so that you will be able to concatenate this part with an other on
 * `I_want_side_wall_punch` : (default: true) set this bit to 1 to reduce material requirement
 * `I_want_mounting_screw_holes` : (default: false)`set this bit to 1 to add mounting hole
+* `I_want_lengthwise_cuts` : (default: false) set this bit to 1 to add extra internal cuts (e.g. business cards)
 
 ## 4x5 Cable Output Spec
 
@@ -71,6 +72,12 @@ countersunkHeight=2;
 * Its dimensions are X = 143.955 and Y = 163.289
 * You have a total number of 20 slots to host your silly cables :)
 
+## 6x5 Business Cards Hive Spec
+
+Similar to 4x5 Cable Output Spec, but specifically:
+* 6x5 slots instead so that two cards can be placed per row
+* slot height is 60mm instead of 120mm
+
 --------------------------------------------------------------------------------
 
 ## Preview:
@@ -89,6 +96,9 @@ countersunkHeight=2;
 
 ### Solid Wall With Screwmount
 ![](./png/cable_hive_solid_wall_with_screwmount_4x5.png)
+
+### Business Card Holder Hive
+![](./png/businesscard_hive_6x5.png)
 
 --------------------------------------------------------------------------------
 

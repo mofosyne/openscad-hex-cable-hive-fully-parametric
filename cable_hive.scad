@@ -28,6 +28,7 @@ nb_slots_Y = 5; // Sets the number of honeycomb slots in Y it's better to have n
 
 /* [Cable Slot] */
 cable_slot_height = 120;  // depth of the slots
+cable_slot_lower_height = cable_slot_height;  // depth of the slots for sloping
 cable_slot_diameter = 42; // diameter of the slots
 
 /* [3D Printer] */
@@ -116,13 +117,14 @@ difference()
     {
         for (Y = [0:(nb_slots_Y - 1)])
         {
+            slotH = (cable_slot_height - cable_slot_lower_height)*((Y%nb_slots_Y+1) / nb_slots_Y) + cable_slot_lower_height;
             if (Y % 2 == 0)
             {
-                translate([ X * pitch_X, Y * pitch_Y, 0 ]) honeycomb();
+                translate([ X * pitch_X, Y * pitch_Y, 0 ]) honeycomb(slotH);
             }
             else if (X != nb_slots_X - 1 || I_wish_to_combine_it_later != 0)
             {
-                translate([ (X + 0.5) * pitch_X, Y * pitch_Y, 0 ]) honeycomb();
+                translate([ (X + 0.5) * pitch_X, Y * pitch_Y, 0 ]) honeycomb(slotH);
             }
         }
     }
@@ -177,7 +179,7 @@ else
 //////////////////////////// Modules //////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-module honeycomb()
+module honeycomb(cable_slot_height)
 {
     //#cylinder(d=cable_slot_diameter,h=cable_slot_height,$fn=64);
     rotate([ 0, 0, 30 ]) difference()

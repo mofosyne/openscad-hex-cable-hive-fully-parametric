@@ -1,6 +1,7 @@
 // OpenSCAD Fully parametric drawer cable storage management hex hive with punch cuts
 // Originally by iX (November 02, 2016)
 // Extended by mofosyne for punchcut support (February 20, 2022)
+// Extended by mofosyne for business card support (June 20, 2022)
 //
 // This is an extension of iX's fully parametric OpenSCAD script but extended to add side cuts to reduce material usage.
 // This OpenSCAD sketch to generate fully customizable honeycomb wire storage system.

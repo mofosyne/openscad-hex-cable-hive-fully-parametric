@@ -117,7 +117,7 @@ difference()
     {
         for (Y = [0:(nb_slots_Y - 1)])
         {
-            slotH = (cable_slot_height - cable_slot_lower_height)*((Y%nb_slots_Y+1) / nb_slots_Y) + cable_slot_lower_height;
+            slotH = (cable_slot_height - cable_slot_lower_height)*((Y%nb_slots_Y) / nb_slots_Y) + cable_slot_lower_height;
             if (Y % 2 == 0)
             {
                 translate([ X * pitch_X, Y * pitch_Y, 0 ]) honeycomb(slotH);

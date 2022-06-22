@@ -28,7 +28,7 @@ nb_slots_Y = 5; // Sets the number of honeycomb slots in Y it's better to have n
 
 /* [Cable Slot] */
 cable_slot_height = 120;  // depth of the slots
-cable_slot_lower_height = cable_slot_height;  // depth of the slots for sloping
+cable_slot_lower_height = 120;  // depth of the slots for sloping (Either I_want_stepped_slope_cuts or I_want_smooth_slope_cuts must be enabled to use this parameter)
 cable_slot_diameter = 42; // diameter of the slots
 
 /* [3D Printer] */
@@ -59,6 +59,8 @@ I_want_side_wall_punch = true; // set this bit to 1 to reduce material requireme
 I_want_mounting_screw_holes = false; // set this bit to 1 to add mounting holes
 
 I_want_lengthwise_cuts = false; // set this bit to 1 to add extra internal cuts (e.g. business cards)
+
+I_want_stepped_slope_cuts = false; // set this bit to 1 to use stepping cuts
 
 I_want_smooth_slope_cuts = false; // set this bit to 1 to use sloping cuts (WARN: May have overhangs if combined with side wall punch)
 
@@ -119,8 +121,8 @@ difference()
     {
         for (Y = [0:(nb_slots_Y - 1)])
         {
-            slotH = I_want_smooth_slope_cuts ? cable_slot_height : ((cable_slot_height-cable_slot_lower_height)*((Y%nb_slots_Y)/(max(1, nb_slots_Y-1))) + cable_slot_lower_height);
-            echo("X=", X, "Y", Y,"-->", slotH);
+            slotH = I_want_stepped_slope_cuts ? ((cable_slot_height-cable_slot_lower_height)*((Y%nb_slots_Y)/(max(1, nb_slots_Y-1))) + cable_slot_lower_height) : cable_slot_height;
+            echo("X=", X, "Y", Y,"-->", slotH, I_want_stepped_slope_cuts?"(stepped)":"(norm)");
             difference()
             {
                 // Bulk

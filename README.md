@@ -55,6 +55,7 @@ countersunkHeight=2;
 * `I_want_side_wall_punch` : (default: true) set this bit to 1 to reduce material requirement
 * `I_want_mounting_screw_holes` : (default: false)`set this bit to 1 to add mounting hole
 * `I_want_lengthwise_cuts` : (default: false) set this bit to 1 to add extra internal cuts (e.g. business cards)
+* `I_want_stepped_slope_cuts` : (default: false) set this bit to 1 to use stepping cuts
 * `I_want_smooth_slope_cuts` : (default: false) set this bit to 1 to use sloping cuts (WARN: May have overhangs if combined with side wall punch)
 
 ## 4x5 Cable Output Spec

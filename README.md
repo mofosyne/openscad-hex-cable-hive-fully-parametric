@@ -6,6 +6,8 @@ OpenSCAD Fully parametric drawer cable storage management hex hive with punch cu
 
 This is an OpenSCAD sketch to generate fully customizable honeycomb wire storage system.
 
+If you got a Prusa MK3S+ you may want to use the `*_6x5.stl` 3d prints as those are designed to fit within a prusa buildplate.
+
 Contributions is welcomed via Pull Requests
 
 * Originally by iX (November 02, 2016) [iX Other Designs on thingiverse](https://www.thingiverse.com/ix__/designs)

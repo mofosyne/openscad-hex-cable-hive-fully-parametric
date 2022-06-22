@@ -119,8 +119,8 @@ difference()
     {
         for (Y = [0:(nb_slots_Y - 1)])
         {
-            slotH = I_want_smooth_slope_cuts ? cable_slot_height : (cable_slot_height - cable_slot_lower_height)*((Y%(nb_slots_Y+1)) / (nb_slots_Y)) + cable_slot_lower_height;
-            //slotH = cable_slot_height;
+            slotH = I_want_smooth_slope_cuts ? cable_slot_height : ((cable_slot_height-cable_slot_lower_height)*((Y%nb_slots_Y)/(max(1, nb_slots_Y-1))) + cable_slot_lower_height);
+            echo("X=", X, "Y", Y,"-->", slotH);
             difference()
             {
                 // Bulk

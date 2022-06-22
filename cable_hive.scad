@@ -60,6 +60,8 @@ I_want_mounting_screw_holes = false; // set this bit to 1 to add mounting holes
 
 I_want_lengthwise_cuts = false; // set this bit to 1 to add extra internal cuts (e.g. business cards)
 
+I_want_smooth_slope_cuts = false; // set this bit to 1 to use sloping cuts (WARN: May have overhangs if combined with side wall punch)
+
 /////////////////////////////////////////////////////////////////////////////////
 //////////////////////////// Private Variables ////////////////////////////////
 ////////////// You shouldn't have to touch these ones ////////////////////
@@ -117,14 +119,41 @@ difference()
     {
         for (Y = [0:(nb_slots_Y - 1)])
         {
-            slotH = (cable_slot_height - cable_slot_lower_height)*((Y%nb_slots_Y) / nb_slots_Y) + cable_slot_lower_height;
-            if (Y % 2 == 0)
+            slotH = I_want_smooth_slope_cuts ? cable_slot_height : (cable_slot_height - cable_slot_lower_height)*((Y%(nb_slots_Y+1)) / (nb_slots_Y)) + cable_slot_lower_height;
+            //slotH = cable_slot_height;
+            difference()
             {
-                translate([ X * pitch_X, Y * pitch_Y, 0 ]) honeycomb(slotH);
-            }
-            else if (X != nb_slots_X - 1 || I_wish_to_combine_it_later != 0)
-            {
-                translate([ (X + 0.5) * pitch_X, Y * pitch_Y, 0 ]) honeycomb(slotH);
+                // Bulk
+                if (Y % 2 == 0)
+                {
+                    translate([ X * pitch_X, Y * pitch_Y, 0 ]) honeycomb(slotH);
+                }
+                else if (X != nb_slots_X - 1 || I_wish_to_combine_it_later != 0)
+                {
+                    translate([ (X + 0.5) * pitch_X, Y * pitch_Y, 0 ]) honeycomb(slotH);
+                }
+                // Slope Cut
+                if (I_want_smooth_slope_cuts)
+                    slope_cut_bulk(0);
+                // Side Wall Punch
+                if (I_want_side_wall_punch)
+                {
+                    difference()
+                    {
+                        // Side wall punch bulk
+                        if (Y % 2 == 0)
+                        {
+                            translate([ X * pitch_X, Y * pitch_Y, 0 ]) honeycomb_side_wall_punch(slotH);
+                        }
+                        else if (X != nb_slots_X - 1 || I_wish_to_combine_it_later != 0)
+                        {
+                            translate([ (X + 0.5) * pitch_X, Y * pitch_Y, 0 ]) honeycomb_side_wall_punch(slotH);
+                        }
+                        // Slope Cut
+                        if (I_want_smooth_slope_cuts)
+                            slope_cut_bulk(-5);
+                    }
+                }
             }
         }
     }
@@ -179,41 +208,17 @@ else
 //////////////////////////// Modules //////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-module honeycomb(cable_slot_height)
+module honeycomb(slotH)
 {
-    //#cylinder(d=cable_slot_diameter,h=cable_slot_height,$fn=64);
+    //#cylinder(d=cable_slot_diameter,h=slotH,$fn=64);
     rotate([ 0, 0, 30 ]) difference()
     {
         // Outer Volume
-        cylinder(d = cable_slot_diameter, h = cable_slot_height);
+        cylinder(d = cable_slot_diameter, h = slotH);
 
         // Inner Volume
-        translate([ 0, 0, cable_slot_wall_thickness ]) cylinder(d = Internal_honeycomb_diameter, h = cable_slot_height);
-
-        // Reduce Material Usage And Print Time By Adding Cuts To Side Walls
-        if (I_want_side_wall_punch)
-        {
-            punch_cut_total_h = (cable_slot_height - cable_slot_wall_thickness * 2);
-            punch_cut_corner_h = punch_cut_total_h / punch_corner_hole_count;
-            max_height_cuts = punch_cut_total_h / punch_cut_corner_h;
-            punch_cut_side_angle = 360 / $fn;
-            punch_cut_W = 2 * (sin(punch_cut_side_angle / 2) * (cable_slot_diameter / 2));
-            punch_cut_Apothem = cos(punch_cut_side_angle / 2) * (cable_slot_diameter / 2);
-            for (cutZ = [0:(max_height_cuts - 1)])
-            {
-                max_rotate_cut = 360 / punch_cut_side_angle;
-                punch_cut_Z = cable_slot_wall_thickness + punch_cut_corner_h / 2 + cutZ * (punch_cut_total_h / max_height_cuts);
-                translate([ 0, 0, punch_cut_Z ])
-                {
-                    for (cutRotate = [0:(max_rotate_cut - 1)])
-                    {
-                        rotate([ 0, 0, (punch_cut_side_angle / 2) + cutRotate * punch_cut_side_angle ])
-                            translate([ punch_cut_Apothem - cable_slot_wall_thickness / 2, 0, 0 ])
-                                cube([ cable_slot_wall_thickness * 2, punch_cut_W - punch_corner_w, punch_cut_corner_h - punch_corner_h ], center = true);
-                    }
-                }
-            }
-        }
+        translate([ 0, 0, cable_slot_wall_thickness ])
+            cylinder(d = Internal_honeycomb_diameter, h = slotH);
 
         // Add mounting screw holes
         if (I_want_mounting_screw_holes)
@@ -222,6 +227,45 @@ module honeycomb(cable_slot_height)
         }
     }
 };
+
+module honeycomb_side_wall_punch(cable_slot_height)
+{
+    // Reduce Material Usage And Print Time By Adding Cuts To Side Walls
+    rotate([ 0, 0, 30 ]) union()
+    {
+        punch_cut_total_h = (cable_slot_height - cable_slot_wall_thickness * 2);
+        punch_cut_corner_h = punch_cut_total_h / punch_corner_hole_count;
+        max_height_cuts = punch_cut_total_h / punch_cut_corner_h;
+        punch_cut_side_angle = 360 / $fn;
+        punch_cut_W = 2 * (sin(punch_cut_side_angle / 2) * (cable_slot_diameter / 2));
+        punch_cut_Apothem = cos(punch_cut_side_angle / 2) * (cable_slot_diameter / 2);
+        for (cutZ = [0:(max_height_cuts - 1)])
+        {
+            max_rotate_cut = 360 / punch_cut_side_angle;
+            punch_cut_Z = cable_slot_wall_thickness + punch_cut_corner_h / 2 + cutZ * (punch_cut_total_h / max_height_cuts);
+            translate([ 0, 0, punch_cut_Z ])
+            {
+                for (cutRotate = [0:(max_rotate_cut - 1)])
+                {
+                    rotate([ 0, 0, (punch_cut_side_angle / 2) + cutRotate * punch_cut_side_angle ])
+                        translate([ punch_cut_Apothem - cable_slot_wall_thickness / 2, 0, 0 ])
+                            cube([ cable_slot_wall_thickness * 2, punch_cut_W - punch_corner_w, punch_cut_corner_h - punch_corner_h ], center = true);
+                }
+            }
+        }
+    }
+};
+
+module slope_cut_bulk(offsetH)
+{
+    hull()
+    {
+        translate([-cable_slot_diameter, (nb_slots_Y-1)*pitch_Y+cable_slot_diameter/2, cable_slot_height+offsetH])
+            cube([nb_slots_X*pitch_X+cable_slot_diameter*2,1,10-offsetH]);
+        translate([-cable_slot_diameter, -cable_slot_diameter/2, cable_slot_lower_height+offsetH])
+            cube([nb_slots_X*pitch_X+cable_slot_diameter*2,1,10+cable_slot_height-cable_slot_lower_height-offsetH]);
+    }
+}
 
 module surrounding_square()
 {

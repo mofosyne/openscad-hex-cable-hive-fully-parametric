@@ -65,16 +65,17 @@ countersunkHeight=2;
 * Requested wall width is : 1.23
 * The real wall width in X is : 1.23
 * The real wall width in Y is : 1.42028
-* External honeycomb X size is  : 36.3731
+* External honeycomb X size is : 36.3731
 * External honeycomb Y size is : 42
-* Internal honeycomb X size is  : 33.9131
+* Internal honeycomb X size is : 33.9131
 * Internal honeycomb Y size is : 39.1594
 * Pitch in X is : 35.1431
 * Pitch bis in X is : 35.1431
 * Pitch in Y is : 30.4348
 * Pitch bis in Y is : 30.4348
-* Its dimensions are X = 143.955 and Y = 163.289
-* You have a total number of 20 slots to host your silly cables :)
+* This is wonderful cable hive you made there :)"
+* Its dimensions are X = 161.834 and Y = 163.289
+
 
 ## 6x5 Business Cards Hive Spec
 

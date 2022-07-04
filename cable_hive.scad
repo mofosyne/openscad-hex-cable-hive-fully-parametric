@@ -28,8 +28,8 @@ nb_slots_X = 4; // Sets the number of honeycomb slot in X direction
 nb_slots_Y = 5; // Sets the number of honeycomb slots in Y it's better to have nb_slots_Y a odd number if you wish to add a surrounding wall
 
 /* [Cable Slot] */
-cable_slot_height = 120;  // depth of the slots
-cable_slot_lower_height = 120;  // depth of the slots for sloping (Either I_want_stepped_slope_cuts or I_want_smooth_slope_cuts must be enabled to use this parameter)
+cable_slot_height = 150;  // depth of the slots
+cable_slot_lower_height = 150;  // depth of the slots for sloping (Either I_want_stepped_slope_cuts or I_want_smooth_slope_cuts must be enabled to use this parameter)
 cable_slot_diameter = 42; // diameter of the slots
 
 /* [3D Printer] */
@@ -38,7 +38,7 @@ nb_of_outer_shell = 3;
 margin_to_have_correct_number_of_lines = 0.01;
 
 /* [Side Wall Punch Related Options] */
-punch_corner_hole_count = 4;
+punch_corner_hole_count = 6;
 punch_corner_w = 8;
 punch_corner_h = 4;
 
@@ -64,6 +64,8 @@ I_want_lengthwise_cuts = false; // set this bit to 1 to add extra internal cuts 
 I_want_stepped_slope_cuts = false; // set this bit to 1 to use stepping cuts
 
 I_want_smooth_slope_cuts = false; // set this bit to 1 to use sloping cuts (WARN: May have overhangs if combined with side wall punch)
+
+I_want_no_base = false; // set this bit to 1 to remove the base. This is suitable for saving plastic if only organising cables.
 
 /////////////////////////////////////////////////////////////////////////////////
 //////////////////////////// Private Variables ////////////////////////////////
@@ -123,7 +125,7 @@ difference()
         for (Y = [0:(nb_slots_Y - 1)])
         {
             slotH = I_want_stepped_slope_cuts ? ((cable_slot_height-cable_slot_lower_height)*((Y%nb_slots_Y)/(max(1, nb_slots_Y-1))) + cable_slot_lower_height) : cable_slot_height;
-            echo("X=", X, "Y", Y,"-->", slotH, I_want_stepped_slope_cuts?"(stepped)":"(norm)");
+            //echo("X=", X, "Y", Y,"-->", slotH, I_want_stepped_slope_cuts?"(stepped)":"(norm)");
             difference()
             {
                 // Bulk
@@ -228,6 +230,13 @@ module honeycomb(slotH)
         {
             drillHole();
         }
+
+        // Remove the base
+        if (I_want_no_base)
+        {
+            translate([ 0, 0, -cable_slot_wall_thickness/2 ])
+                cylinder(d = Internal_honeycomb_diameter, h = 2*cable_slot_wall_thickness);
+        }
     }
 };
 
@@ -305,15 +314,13 @@ module drillHole()
     if (countersunkHeight > cable_slot_wall_thickness)
     {
         // Not thick enough for countersink. Just make a simple hole
-        translate([0,-backplateThickness-0.001,0])
-            rotate([0,0,0])
-                translate([0,0,-0.01]) cylinder(r=drillholeDiameter/2,h=(backplateThickness+0.02),$fn=fn);
+        translate([0,-backplateThickness-0.001,-0.01])
+            cylinder(r=drillholeDiameter/2,h=(backplateThickness+0.02),$fn=fn);
     }
     else
     {
-        // Large enough for countersink hollowingd
+        // Large enough for countersink hollowing
         translate([0,-backplateThickness-0.001,0])
-            rotate([0,0,0])
             {
                 translate([0,0,-0.01]) cylinder(r=drillholeDiameter/2,h=backplateThickness,$fn=fn);
                 translate([0,0,backplateThickness-countersunkHeight+0.001]) cylinder(r1=drillholeDiameter/2,r2=countersunkDiameter/2,h=countersunkHeight+0.02,$fn=fn);
@@ -325,20 +332,22 @@ module drillHole()
 module honeycomb_side_wall_cut()
 {
     // Add Extended Cut (e.g. Business Cards)
+    sidewall_h = I_want_no_base ? cable_slot_height + 0.02 : cable_slot_height;
+    sidewall_shift = I_want_no_base ? -0.01 : cable_slot_wall_thickness;
     rotate([ 0, 0, 30 ])
+    translate([ 0, 0, sidewall_shift + sidewall_h / 2 ])
     {
         // Add Extended Cut (e.g. Business Cards)
-        less_side_wall_total_h = (cable_slot_height - cable_slot_wall_thickness * 2);
+        less_side_wall_total_h = (sidewall_h - cable_slot_wall_thickness * 2);
         less_side_wall_corner_h = less_side_wall_total_h / punch_corner_hole_count;
         less_side_wall_side_angle = 360 / $fn;
         less_side_wall_W = 2 * (sin(less_side_wall_side_angle / 2) * (cable_slot_diameter / 2));
         less_side_wall_Apothem = cos(less_side_wall_side_angle / 2) * (cable_slot_diameter / 2);
         for (cutRotate = [2:2])
         {
-            translate([ 0, 0, cable_slot_wall_thickness + cable_slot_height / 2 ])
-                rotate([ 0, 0, (less_side_wall_side_angle / 2) + cutRotate * less_side_wall_side_angle ])
-                    translate([ less_side_wall_Apothem - cable_slot_wall_thickness / 2, 0, 0 ])
-                        cube([ cable_slot_wall_thickness * 2, less_side_wall_W - cable_slot_wall_thickness, cable_slot_height], center = true);
+            rotate([ 0, 0, (less_side_wall_side_angle / 2) + cutRotate * less_side_wall_side_angle ])
+                translate([ less_side_wall_Apothem - cable_slot_wall_thickness / 2, 0, 0 ])
+                    cube([ cable_slot_wall_thickness * 2, less_side_wall_W - cable_slot_wall_thickness, sidewall_h], center = true);
         }
     }
 };

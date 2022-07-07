@@ -65,7 +65,7 @@ I_want_stepped_slope_cuts = false; // set this bit to 1 to use stepping cuts
 
 I_want_smooth_slope_cuts = false; // set this bit to 1 to use sloping cuts (WARN: May have overhangs if combined with side wall punch)
 
-I_want_no_base = false; // set this bit to 1 to remove the base. This is suitable for saving plastic if only organising cables.
+I_want_reduced_base = false; // set this bit to 1 to reduce the base use of plastic
 
 /////////////////////////////////////////////////////////////////////////////////
 //////////////////////////// Private Variables ////////////////////////////////
@@ -216,26 +216,71 @@ else
 module honeycomb(slotH)
 {
     //#cylinder(d=cable_slot_diameter,h=slotH,$fn=64);
-    rotate([ 0, 0, 30 ]) difference()
+    rotate([ 0, 0, 30 ])
+    union()
     {
-        // Outer Volume
-        cylinder(d = cable_slot_diameter, h = slotH);
-
-        // Inner Volume
-        translate([ 0, 0, cable_slot_wall_thickness ])
-            cylinder(d = Internal_honeycomb_diameter, h = slotH);
-
-        // Add mounting screw holes
-        if (I_want_mounting_screw_holes)
+        difference()
         {
-            drillHole();
+            // Outer Volume
+            cylinder(d = cable_slot_diameter, h = slotH);
+
+            // Inner Volume
+            translate([ 0, 0, -0.01 ])
+                cylinder(d = Internal_honeycomb_diameter, h = slotH + 0.02);
         }
 
-        // Remove the base
-        if (I_want_no_base)
+        // Base
+        intersection()
         {
-            translate([ 0, 0, -cable_slot_wall_thickness/2 ])
-                cylinder(d = Internal_honeycomb_diameter, h = 2*cable_slot_wall_thickness);
+            // Flat Sturdy Base
+            cylinder(d = Internal_honeycomb_diameter, h = cable_slot_wall_thickness);
+
+            difference()
+            {
+                // Base Bulk
+                if (!I_want_reduced_base)
+                {
+                    // Flat Sturdy Base
+                    cylinder(d = Internal_honeycomb_diameter, h = cable_slot_wall_thickness);
+                }
+                else
+                {
+                    // Reduced Plastic
+                    if (I_want_mounting_screw_holes)
+                    {
+                        // Screw Hole
+                        diaThick = (countersunkHeight > cable_slot_wall_thickness) ? drillholeDiameter : countersunkDiameter;
+                        translate([0, 0, cable_slot_wall_thickness/2])
+                        {
+                            rotate([0,0,0])
+                                cube([Internal_honeycomb_diameter, diaThick, cable_slot_wall_thickness], center=true);
+                            rotate([0,0,60])
+                                cube([Internal_honeycomb_diameter, diaThick, cable_slot_wall_thickness], center=true);
+                            rotate([0,0,-60])
+                                cube([Internal_honeycomb_diameter, diaThick, cable_slot_wall_thickness], center=true);
+                        }
+                        cylinder(d = diaThick, h = cable_slot_wall_thickness);
+                    }
+                    else
+                    {
+                        // No Mounting Hole Required
+                        translate([0, 0, cable_slot_wall_thickness/2])
+                        {
+                            rotate([0,0,0])
+                                cube([Internal_honeycomb_diameter, cable_slot_wall_thickness, cable_slot_wall_thickness], center=true);
+                            rotate([0,0,60])
+                                cube([Internal_honeycomb_diameter, cable_slot_wall_thickness, cable_slot_wall_thickness], center=true);
+                            rotate([0,0,-60])
+                                cube([Internal_honeycomb_diameter, cable_slot_wall_thickness, cable_slot_wall_thickness], center=true);
+                        }
+                    }
+                }
+                // Add mounting screw holes
+                if (I_want_mounting_screw_holes)
+                {
+                    drillHole();
+                }
+            }
         }
     }
 };
@@ -314,17 +359,14 @@ module drillHole()
     if (countersunkHeight > cable_slot_wall_thickness)
     {
         // Not thick enough for countersink. Just make a simple hole
-        translate([0,-backplateThickness-0.001,-0.01])
+        translate([0,0,-0.01])
             cylinder(r=drillholeDiameter/2,h=(backplateThickness+0.02),$fn=fn);
     }
     else
     {
         // Large enough for countersink hollowing
-        translate([0,-backplateThickness-0.001,0])
-            {
-                translate([0,0,-0.01]) cylinder(r=drillholeDiameter/2,h=backplateThickness,$fn=fn);
-                translate([0,0,backplateThickness-countersunkHeight+0.001]) cylinder(r1=drillholeDiameter/2,r2=countersunkDiameter/2,h=countersunkHeight+0.02,$fn=fn);
-            }
+        translate([0,0,-0.01]) cylinder(r=drillholeDiameter/2,h=backplateThickness,$fn=fn);
+        translate([0,0,backplateThickness-countersunkHeight+0.001]) cylinder(r1=drillholeDiameter/2,r2=countersunkDiameter/2,h=countersunkHeight+0.02,$fn=fn);
     }
 }
 
@@ -332,8 +374,8 @@ module drillHole()
 module honeycomb_side_wall_cut()
 {
     // Add Extended Cut (e.g. Business Cards)
-    sidewall_h = I_want_no_base ? cable_slot_height + 0.02 : cable_slot_height;
-    sidewall_shift = I_want_no_base ? -0.01 : cable_slot_wall_thickness;
+    sidewall_h = I_want_reduced_base ? cable_slot_height + 0.02 : cable_slot_height;
+    sidewall_shift = cable_slot_wall_thickness;
     rotate([ 0, 0, 30 ])
     translate([ 0, 0, sidewall_shift + sidewall_h / 2 ])
     {

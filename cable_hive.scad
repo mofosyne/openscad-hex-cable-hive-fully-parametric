@@ -225,8 +225,17 @@ module honeycomb(slotH)
             cylinder(d = cable_slot_diameter, h = slotH);
 
             // Inner Volume
-            translate([ 0, 0, -0.01 ])
-                cylinder(d = Internal_honeycomb_diameter, h = slotH + 0.02);
+            difference()
+            {
+                translate([ 0, 0, -0.01 ])
+                    cylinder(d = Internal_honeycomb_diameter, h = slotH + 0.02);
+
+                // Strenghting Edge
+                for (roti = [0:6])
+                    rotate([0,0,30+roti*60])
+                        translate([ 0, Internal_honeycomb_diameter/2, (slotH + 0.02)/2 ])
+                            cube([cable_slot_wall_thickness*5, cable_slot_wall_thickness, slotH + 0.02], center=true);
+            }
         }
 
         // Base
@@ -267,11 +276,11 @@ module honeycomb(slotH)
                         translate([0, 0, cable_slot_wall_thickness/2])
                         {
                             rotate([0,0,0])
-                                cube([Internal_honeycomb_diameter, cable_slot_wall_thickness, cable_slot_wall_thickness], center=true);
+                                cube([Internal_honeycomb_diameter, punch_corner_h, cable_slot_wall_thickness], center=true);
                             rotate([0,0,60])
-                                cube([Internal_honeycomb_diameter, cable_slot_wall_thickness, cable_slot_wall_thickness], center=true);
+                                cube([Internal_honeycomb_diameter, punch_corner_h, cable_slot_wall_thickness], center=true);
                             rotate([0,0,-60])
-                                cube([Internal_honeycomb_diameter, cable_slot_wall_thickness, cable_slot_wall_thickness], center=true);
+                                cube([Internal_honeycomb_diameter, punch_corner_h, cable_slot_wall_thickness], center=true);
                         }
                     }
                 }
